@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Operación E.S.C.A.P.E. — Protocolo A.R.E.S.</title>
+<style>
+  :root{
+    --bg:#000;
+    --text:#fff;
+    --accent:#ffea00;
+    --panel:#111;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:"Courier New",monospace;
+    color:var(--text);
+    overflow:hidden;
+    position: relative;
+    background: #000;
+  }
+
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 1s ease;
+  }
+  .screen.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .panel{
+    background: rgba(17,17,17,0.7); /* semi-transparente */
+    backdrop-filter: blur(6px);
+    border-radius:14px;
+    padding:28px;
+    max-width:800px;
+    width:90%;
+    box-shadow:0 0 20px rgba(255,234,0,0.3);
+  }
+
+  .title{
+    font-size:28px;
+    font-weight:bold;
+    color:var(--accent);
+    text-shadow:0 0 10px var(--accent),0 0 30px var(--accent);
+    margin-bottom:16px;
+    display:inline-block;
+    min-height:36px;
+  }
+
+  .important{
+    color:var(--text);
+    font-weight:bold;
+  }
+
+  button{
+    background:transparent;
+    border:1px solid rgba(255,234,0,0.5);
+    color:var(--text);
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:inherit;
+    margin-top:20px;
+    transition:0.2s;
+  }
+  button:hover{
+    border-color:rgba(255,234,0,0.9);
+    text-shadow:0 0 8px var(--accent);
+  }
+
+  pre{
+    background:#000;
+    padding:18px;
+    border-radius:8px;
+    color:var(--text);
+    font-size:16px;
+    line-height:1.6;
+    white-space:pre-wrap;
+    margin-top:12px;
+  }
+
+  input{
+    background:#000;
+    border:1px solid rgba(255,234,0,0.4);
+    color:var(--text);
+    padding:6px 10px;
+    border-radius:6px;
+    font-family:inherit;
+    width:180px;
+    margin-top:12px;
+  }
+
+  .ok{color:#b8ff90; font-weight:bold;}
+  .fail{color:#ff8080; font-weight:bold;}
+  .fade{animation:fadeIn 2s ease forwards;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA 1 -->
+<div id="screen1" class="screen active">
+  <div class="panel">
+    <div class="title" data-text="Bienvenido, agente Arlandis"></div>
+    <p>El alto mando ha identificado tu perfil como idóneo para una misión de máxima prioridad. Has sido seleccionado para la operación <span class="important">E.S.C.A.P.E.</span>  
+    (<em>Exploration & Security Covert Agency: Protocolo Especial</em>), una misión crítica de inteligencia y acción encubierta.<br><br>
+    Formas parte de la élite de la división <span class="important">A.R.E.S.</span>  
+    (<em>Advanced Recon & Espionage Systems</em>),responsable de ejecutar las operaciones más confidenciales de la comunidad digital.<br><br>
+    Tu ingenio, precisión y discreción serán puestos a prueba. Si estás listo para asumir tu rol, inicia el protocolo de autenticación.</p>
+    <button id="startBtn">INICIAR AUTENTICACIÓN</button>
+  </div>
+</div>
+
+<!-- PANTALLA 2 -->
+<div id="screen2" class="screen">
+  <div class="panel">
+    <div class="title" data-text="Autenticación de agente"></div>
+    <p>Agente Arlandis, tu acceso depende de tu capacidad de descifrar códigos y mantener la concentración.<br>
+    Decodifica con precisión el siguiente mensaje binario y demuestra que estás listo para continuar con la operación.</p>
+
+    <pre id="bin">
+01010110 01000101 00100000 01000001 01001100 00100000 01000011 01001111 01000011 01001000 01000101
+    </pre>
+
+    <button id="hintBtn">SOLICITAR AYUDA</button>
+    <div id="hintText" style="display:none;margin-top:10px;">
+      💡 Pista: Cada bloque de 8 dígitos representa un carácter ASCII. Concéntrate, agente.
+    </div>
+
+    <div style="margin-top:15px;">
+      <input type="text" id="answer" placeholder="Introduce el texto..."/>
+      <button id="checkBtn">VERIFICAR</button>
+    </div>
+
+    <div id="revealBox" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<!-- PANTALLA 3 -->
+<div id="screen3" class="screen">
+  <div class="panel">
+    <div class="title" data-text="Identidad confirmada"></div>
+    <p class="fade" id="finalText">
+      Excelente, <strong>Agente Arlandis</strong>.<br><br>
+      Tu identidad ha sido verificada con éxito.<br>
+      Todas las credenciales y acceso al protocolo están activas.<br><br>
+      Dirígete al vehículo asignado. Allí encontrarás un sobre sellado con tu siguiente misión.<br>
+      Mantén discreción absoluta y sigue las instrucciones con precisión.<br><br>
+      <span class="important">Transmisión finalizada. Buena suerte, Agente.</span>
+    </p>
+  </div>
+</div>
+
+<!-- Canvas dinámico de fondo -->
+<canvas id="bgCanvas"></canvas>
+
+<script>
+window.onload=function(){
+  // Efecto letra por letra en títulos
+  document.querySelectorAll('.title').forEach(title=>{
+    const text = title.dataset.text;
+    let i=0;
+    function type(){
+      if(i<text.length){
+        title.textContent+=text[i];
+        i++;
+        setTimeout(type, 60);
+      }
+    }
+    type();
+  });
+
+  // -----------------------
+  // FONDO DINÁMICO DE MISION SECRETA
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  const numParticles = 150;
+  const particles = [];
+
+  for(let i=0;i<numParticles;i++){
+    particles.push({
+      x: Math.random()*width,
+      y: Math.random()*height,
+      vx: (Math.random()-0.5)*0.3,
+      vy: - (0.2 + Math.random()*0.5),
+      size: Math.random()*2+1,
+      alpha: Math.random()*0.3+0.1
+    });
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,width,height);
+    
+    // Gradientes de luz sutiles
+    const gradient1 = ctx.createRadialGradient(width*0.2,height*0.3,0,width*0.2,height*0.3,300);
+    gradient1.addColorStop(0,'rgba(255,234,0,0.2)');
+    gradient1.addColorStop(1,'transparent');
+    ctx.fillStyle = gradient1;
+    ctx.fillRect(0,0,width,height);
+
+    const gradient2 = ctx.createRadialGradient(width*0.8,height*0.7,0,width*0.8,height*0.7,400);
+    gradient2.addColorStop(0,'rgba(0,160,255,0.15)');
+    gradient2.addColorStop(1,'transparent');
+    ctx.fillStyle = gradient2;
+    ctx.fillRect(0,0,width,height);
+
+    // Partículas
+    for(let p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if(p.y < -p.size){ p.y = height + p.size; p.x = Math.random()*width; }
+      if(p.x < 0) p.x = width;
+      if(p.x > width) p.x = 0;
+
+      ctx.fillStyle = `rgba(255,234,0,${p.alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    // Grid verde tenue (sala de comando)
+    ctx.strokeStyle = 'rgba(0,255,0,0.05)';
+    ctx.lineWidth = 1;
+    const gridSize = 20;
+    for(let x=0;x<width;x+=gridSize){
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke();
+    }
+    for(let y=0;y<height;y+=gridSize){
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke();
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+  // -----------------------
+
+  const s1=document.getElementById('screen1');
+  const s2=document.getElementById('screen2');
+  const s3=document.getElementById('screen3');
+  const startBtn=document.getElementById('startBtn');
+  const hintBtn=document.getElementById('hintBtn');
+  const hintText=document.getElementById('hintText');
+  const checkBtn=document.getElementById('checkBtn');
+  const answer=document.getElementById('answer');
+  const reveal=document.getElementById('revealBox');
+
+  function showScreen(target){
+    [s1,s2,s3].forEach(s=>s.classList.remove('active'));
+    target.classList.add('active');
+  }
+
+  startBtn.onclick=()=>{ showScreen(s2); };
+  hintBtn.onclick=()=>{ hintText.style.display='block'; hintBtn.disabled=true; };
+
+  checkBtn.onclick=()=>{
+    const val=answer.value.trim().toUpperCase().replace(/\s+/g,'');
+    if(val==="VEALCOCHE"){
+      reveal.innerHTML="<div class='ok'>✅ Código aceptado. Acceso concedido...</div>";
+      setTimeout(()=>showScreen(s3),1500);
+    } else {
+      reveal.innerHTML="<div class='fail'>❌ Código incorrecto. Inténtalo de nuevo.</div>";
+    }
+  };
+
+  // Easter Egg: Sacudir móvil
+  if(window.DeviceMotionEvent){
+    let lastX=null,lastY=null,lastZ=null;
+    let shakeCount=0;
+    const shakeThreshold=18;
+    const secretMsg="⚠️ CANAL SECRETO ACTIVADO ⚠️\n\nBuen instinto, agente Arlandis.\nSolución: ve al coche.\nMantén la discreción.";
+    window.addEventListener('devicemotion',function(e){
+      const acc=e.accelerationIncludingGravity;
+      if(!acc) return;
+      if(lastX===null){lastX=acc.x; lastY=acc.y; lastZ=acc.z; return;}
+      const delta=Math.abs(acc.x-lastX)+Math.abs(acc.y-lastY)+Math.abs(acc.z-lastZ);
+      if(delta>shakeThreshold){
+        shakeCount++;
+        if(shakeCount>=2){
+          alert(secretMsg);
+          shakeCount=0;
+        }
+      } else {
+        if(shakeCount>0) shakeCount=Math.max(0,shakeCount-0.05);
+      }
+      lastX=acc.x; lastY=acc.y; lastZ=acc.z;
+    });
+  }
+  // Consola para curiosos
+  window.ARES={status:()=>alert("Agente Arlandis, autenticación pendiente. Decodifica el mensaje binario.")};
+};
+</script>
+</body>
+</html>
