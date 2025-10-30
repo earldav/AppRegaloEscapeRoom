@@ -130,10 +130,11 @@
     <div class="title" data-text="Autenticación de agente"></div>
     <p>Agente Arlandis, tu acceso depende de tu capacidad de descifrar códigos y mantener la concentración.<br>
     Decodifica con precisión el siguiente mensaje binario y demuestra que estás listo para continuar con la operación.</p>
+    <div class="intel-message" style="color:#ffea00; font-size:13px; margin-top:10px; opacity:0.7;">
+      💡 Los agentes veteranos descubrieron que una ligera alteración del entorno puede activar atajos en el protocolo.
+    </div>
 
-    <pre id="bin">
-01010110 01000101 00100000 01000001 01001100 00100000 01000011 01001111 01000011 01001000 01000101
-    </pre>
+    <pre id="bin">01010110 01000101 00100000 01000001 01001100 00100000 01000011 01001111 01000011 01001000 01000101</pre>
 
     <button id="hintBtn">SOLICITAR AYUDA</button>
     <div id="hintText" style="display:none;margin-top:10px;">
@@ -289,7 +290,7 @@ window.onload=function(){
     let lastX=null,lastY=null,lastZ=null;
     let shakeCount=0;
     const shakeThreshold=18;
-    const secretMsg="⚠️ CANAL SECRETO ACTIVADO ⚠️\n\nBuen instinto, agente Arlandis.\nSolución: ve al coche.\nMantén la discreción.";
+    const secretMsg="⚠️ CANAL SECRETO ACTIVADO ⚠️\n\nBuen instinto, agente Arlandis.\nSolución: 86 69 32 65 76 32 67 79 67 72 69.\nMantén la discreción.";
     window.addEventListener('devicemotion',function(e){
       const acc=e.accelerationIncludingGravity;
       if(!acc) return;
