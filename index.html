@@ -3,314 +3,252 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Operación E.S.C.A.P.E. — Protocolo A.R.E.S.</title>
+<title>Gimcana del Amigo Invisible</title>
+
 <style>
-  :root{
-    --bg:#000;
-    --text:#fff;
-    --accent:#ffea00;
-    --panel:#111;
-  }
+:root{
+  --bg:#000;
+  --text:#fff;
+  --accent:#ff4fcf;
+  --panel:#111;
+}
 
-  html,body{
-    height:100%;
-    margin:0;
-    font-family:"Courier New",monospace;
-    color:var(--text);
-    overflow:hidden;
-    position: relative;
-    background: #000;
-  }
+html,body{
+  height:100%;
+  margin:0;
+  font-family:"Courier New",monospace;
+  background:#000;
+  color:var(--text);
+  overflow:hidden;
+}
 
-  .screen{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:20px;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 1s ease;
-  }
-  .screen.active{
-    opacity:1;
-    pointer-events:auto;
-  }
+.screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.8s;
+}
 
-  .panel{
-    background: rgba(17,17,17,0.7); /* semi-transparente */
-    backdrop-filter: blur(6px);
-    border-radius:14px;
-    padding:28px;
-    max-width:800px;
-    width:90%;
-    box-shadow:0 0 20px rgba(255,234,0,0.3);
-  }
+.screen.active{
+  opacity:1;
+  pointer-events:auto;
+}
 
-  .title{
-    font-size:28px;
-    font-weight:bold;
-    color:var(--accent);
-    text-shadow:0 0 10px var(--accent),0 0 30px var(--accent);
-    margin-bottom:16px;
-    display:inline-block;
-    min-height:36px;
-  }
+.panel{
+  background:rgba(17,17,17,0.75);
+  backdrop-filter:blur(6px);
+  padding:30px;
+  border-radius:16px;
+  width:90%;
+  max-width:700px;
+  box-shadow:0 0 25px var(--accent);
+}
 
-  .important{
-    color:var(--text);
-    font-weight:bold;
-  }
+.title{
+  font-size:26px;
+  color:var(--accent);
+  margin-bottom:20px;
+  text-shadow:0 0 12px var(--accent);
+}
 
-  button{
-    background:transparent;
-    border:1px solid rgba(255,234,0,0.5);
-    color:var(--text);
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-    font-family:inherit;
-    margin-top:20px;
-    transition:0.2s;
-  }
-  button:hover{
-    border-color:rgba(255,234,0,0.9);
-    text-shadow:0 0 8px var(--accent);
-  }
+button{
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--text);
+  padding:10px 20px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:15px;
+}
 
-  pre{
-    background:#000;
-    padding:18px;
-    border-radius:8px;
-    color:var(--text);
-    font-size:16px;
-    line-height:1.6;
-    white-space:pre-wrap;
-    margin-top:12px;
-  }
+input{
+  background:#000;
+  border:1px solid var(--accent);
+  color:var(--text);
+  padding:8px;
+  border-radius:6px;
+  width:200px;
+  text-align:center;
+  margin-top:10px;
+}
 
-  input{
-    background:#000;
-    border:1px solid rgba(255,234,0,0.4);
-    color:var(--text);
-    padding:6px 10px;
-    border-radius:6px;
-    font-family:inherit;
-    width:180px;
-    margin-top:12px;
-  }
+.ok{color:#b8ff90;font-weight:bold;}
+.fail{color:#ff8080;font-weight:bold;}
 
-  .ok{color:#b8ff90; font-weight:bold;}
-  .fail{color:#ff8080; font-weight:bold;}
-  .fade{animation:fadeIn 2s ease forwards;}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+canvas {
+  position:fixed;   /* que ocupe toda la pantalla */
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;        /* debajo de todo */
+  pointer-events:none; /* no bloquea botones ni inputs */
+}
+
+@media (max-width: 600px) {
+  .panel {
+    width: auto;          /* que respete el max-width pero no sea 100% */
+    margin: 0 15px;       /* margen lateral para separarlo de los bordes */
+    padding: 25px 20px;   /* un poquito más de espacio dentro */
+  }
+}
 </style>
 </head>
+
 <body>
 
-<!-- PANTALLA 1 -->
-<div id="screen1" class="screen active">
+<!-- PANTALLA INICIO -->
+<div id="s1" class="screen active">
   <div class="panel">
-    <div class="title" data-text="Bienvenido, agente Arlandis"></div>
-    <p>El alto mando ha identificado tu perfil como idóneo para una misión de máxima prioridad. Has sido seleccionado para la operación <span class="important">E.S.C.A.P.E.</span>  
-    (<em>Exploration & Security Covert Agency: Protocolo Especial</em>), una misión crítica de inteligencia y acción encubierta.<br><br>
-    Formas parte de la élite de la división <span class="important">A.R.E.S.</span>  
-    (<em>Advanced Recon & Espionage Systems</em>),responsable de ejecutar las operaciones más confidenciales de la comunidad digital.<br><br>
-    Tu ingenio, precisión y discreción serán puestos a prueba. Si estás listo para asumir tu rol, inicia el protocolo de autenticación.</p>
-    <button id="startBtn">INICIAR AUTENTICACIÓN</button>
-  </div>
-</div>
-
-<!-- PANTALLA 2 -->
-<div id="screen2" class="screen">
-  <div class="panel">
-    <div class="title" data-text="Autenticación de agente"></div>
-    <p>Agente Arlandis, tu acceso depende de tu capacidad de descifrar códigos y mantener la concentración.<br>
-    Decodifica con precisión el siguiente mensaje binario y demuestra que estás listo para continuar con la operación.</p>
-    <div class="intel-message" style="color:#ffea00; font-size:13px; margin-top:10px; opacity:0.7;">
-      💡 Los agentes veteranos descubrieron que una ligera alteración del entorno puede activar atajos en el protocolo.
-    </div>
-
-    <pre id="bin">01010110 01000101 00100000 01000001 01001100 00100000 01000011 01001111 01000011 01001000 01000101</pre>
-
-    <button id="hintBtn">SOLICITAR AYUDA</button>
-    <div id="hintText" style="display:none;margin-top:10px;">
-      💡 Pista: Cada bloque de 8 dígitos representa un carácter ASCII. Concéntrate, agente.
-    </div>
-
-    <div style="margin-top:15px;">
-      <input type="text" id="answer" placeholder="Introduce el texto..."/>
-      <button id="checkBtn">VERIFICAR</button>
-    </div>
-
-    <div id="revealBox" style="margin-top:20px;"></div>
-  </div>
-</div>
-
-<!-- PANTALLA 3 -->
-<div id="screen3" class="screen">
-  <div class="panel">
-    <div class="title" data-text="Identidad confirmada"></div>
-    <p class="fade" id="finalText">
-      Excelente, <strong>Agente Arlandis</strong>.<br><br>
-      Tu identidad ha sido verificada con éxito.<br>
-      Todas las credenciales y acceso al protocolo están activas.<br><br>
-      Dirígete al vehículo asignado. Allí encontrarás un sobre sellado con tu siguiente misión.<br>
-      Mantén discreción absoluta y sigue las instrucciones con precisión.<br><br>
-      <span class="important">Transmisión finalizada. Buena suerte, Agente.</span>
+    <div class="title">Bienvenida, Zaira</div>
+    <p>
+      Si estás leyendo esto es porque has dado el primer paso.<br><br>
+      Aquí no hay regalos fáciles.<br>
+      Para conseguirlos tendrás que superar una serie de retos.<br><br>
+      Cada respuesta correcta será recompensada con un regalo.
     </p>
+    <button onclick="go(6)">SIGUIENTE</button>
   </div>
 </div>
 
-<!-- Canvas dinámico de fondo -->
-<canvas id="bgCanvas"></canvas>
+<!-- RETO -->
+<div id="s2" class="screen">
+  <div class="panel">
+    <div class="title" id="retoTitulo"></div>
+    <p id="retoTexto"></p>
+
+    <input id="respuesta" placeholder="Introduce la clave">
+    <br>
+    <button onclick="comprobar()">VERIFICAR</button>
+
+    <div id="resultado" style="margin-top:15px;"></div>
+  </div>
+</div>
+
+<!-- INSTRUCCIONES -->
+<div id="s6" class="screen">
+  <div class="panel">
+    <div class="title">Instrucciones</div>
+    <p>
+      1. Lee atentamente cada reto que se encuentra en los sobres negros.<br><br>
+      2. Resuelve la prueba para obtener la clave.<br><br>
+      3. Introduce la clave en el sistema.<br><br>
+      4. Si es correcta, podrás abrir el regalo con el número que coincide con el del reto que acabas de cumplir.<br><br>
+      5. Continúa hasta completar todos los retos.
+    </p>
+    <button onclick="go(2)">INICIAR JUEGO</button>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div id="s3" class="screen">
+  <div class="panel">
+    <div class="title">Caso resuelto</div>
+    <p>
+      Has resuleto cada pista.<br>
+      Ahora es hora de descubrir quién está detrás de todo esto para poder abrir tu último regalo.
+    </p>
+    <input id="culpable" placeholder="Nombre del culpable">
+    <br>
+    <button onclick="final()">DESCUBRIR</button>
+    <div id="finalMsg" style="margin-top:15px;"></div>
+  </div>
+</div>
+
+<canvas id="bg"></canvas>
 
 <script>
-window.onload=function(){
-  // Efecto letra por letra en títulos
-  document.querySelectorAll('.title').forEach(title=>{
-    const text = title.dataset.text;
-    let i=0;
-    function type(){
-      if(i<text.length){
-        title.textContent+=text[i];
-        i++;
-        setTimeout(type, 60);
-      }
-    }
-    type();
-  });
+let reto = 1;
 
-  // -----------------------
-  // FONDO DINÁMICO DE MISION SECRETA
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  let width = canvas.width = window.innerWidth;
-  let height = canvas.height = window.innerHeight;
-
-  window.addEventListener('resize', () => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  });
-
-  const numParticles = 150;
-  const particles = [];
-
-  for(let i=0;i<numParticles;i++){
-    particles.push({
-      x: Math.random()*width,
-      y: Math.random()*height,
-      vx: (Math.random()-0.5)*0.3,
-      vy: - (0.2 + Math.random()*0.5),
-      size: Math.random()*2+1,
-      alpha: Math.random()*0.3+0.1
-    });
+const retos = {
+  1:{
+    titulo:"RETO 1",
+    texto:"Alguien dejó algo a medio cubrir, confiando en que supieras mirar más allá de la superficie.Rasca con cuidado.Reúne las letras.Forma la palabra correcta e introdúcela.",
+    clave:"skincare"
+  },
+  2:{
+    titulo:"RETO 2",
+    texto:"Lo que buscas permanece oculto hasta que se dan ciertas condiciones. Observa bien lo que se oculta y déjate guiar.",
+    clave:"glow"
+  },
+  3:{
+    titulo:"RETO 3",
+    texto:"Algunas cosas solo se revelan cuando se combinan.",
+    clave:"023"
   }
-
-  function animate(){
-    ctx.clearRect(0,0,width,height);
-    
-    // Gradientes de luz sutiles
-    const gradient1 = ctx.createRadialGradient(width*0.2,height*0.3,0,width*0.2,height*0.3,300);
-    gradient1.addColorStop(0,'rgba(255,234,0,0.2)');
-    gradient1.addColorStop(1,'transparent');
-    ctx.fillStyle = gradient1;
-    ctx.fillRect(0,0,width,height);
-
-    const gradient2 = ctx.createRadialGradient(width*0.8,height*0.7,0,width*0.8,height*0.7,400);
-    gradient2.addColorStop(0,'rgba(0,160,255,0.15)');
-    gradient2.addColorStop(1,'transparent');
-    ctx.fillStyle = gradient2;
-    ctx.fillRect(0,0,width,height);
-
-    // Partículas
-    for(let p of particles){
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if(p.y < -p.size){ p.y = height + p.size; p.x = Math.random()*width; }
-      if(p.x < 0) p.x = width;
-      if(p.x > width) p.x = 0;
-
-      ctx.fillStyle = `rgba(255,234,0,${p.alpha})`;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-      ctx.fill();
-    }
-
-    // Grid verde tenue (sala de comando)
-    ctx.strokeStyle = 'rgba(0,255,0,0.05)';
-    ctx.lineWidth = 1;
-    const gridSize = 20;
-    for(let x=0;x<width;x+=gridSize){
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke();
-    }
-    for(let y=0;y<height;y+=gridSize){
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke();
-    }
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-  // -----------------------
-
-  const s1=document.getElementById('screen1');
-  const s2=document.getElementById('screen2');
-  const s3=document.getElementById('screen3');
-  const startBtn=document.getElementById('startBtn');
-  const hintBtn=document.getElementById('hintBtn');
-  const hintText=document.getElementById('hintText');
-  const checkBtn=document.getElementById('checkBtn');
-  const answer=document.getElementById('answer');
-  const reveal=document.getElementById('revealBox');
-
-  function showScreen(target){
-    [s1,s2,s3].forEach(s=>s.classList.remove('active'));
-    target.classList.add('active');
-  }
-
-  startBtn.onclick=()=>{ showScreen(s2); };
-  hintBtn.onclick=()=>{ hintText.style.display='block'; hintBtn.disabled=true; };
-
-  checkBtn.onclick=()=>{
-    const val=answer.value.trim().toUpperCase().replace(/\s+/g,'');
-    if(val==="VEALCOCHE"){
-      reveal.innerHTML="<div class='ok'>✅ Código aceptado. Acceso concedido...</div>";
-      setTimeout(()=>showScreen(s3),1500);
-    } else {
-      reveal.innerHTML="<div class='fail'>❌ Código incorrecto. Inténtalo de nuevo.</div>";
-    }
-  };
-
-  // Easter Egg: Sacudir móvil
-  if(window.DeviceMotionEvent){
-    let lastX=null,lastY=null,lastZ=null;
-    let shakeCount=0;
-    const shakeThreshold=18;
-    const secretMsg="⚠️ CANAL SECRETO ACTIVADO ⚠️\n\nBuen instinto, agente Arlandis.\nSolución: 86 69 32 65 76 32 67 79 67 72 69.\nMantén la discreción.";
-    window.addEventListener('devicemotion',function(e){
-      const acc=e.accelerationIncludingGravity;
-      if(!acc) return;
-      if(lastX===null){lastX=acc.x; lastY=acc.y; lastZ=acc.z; return;}
-      const delta=Math.abs(acc.x-lastX)+Math.abs(acc.y-lastY)+Math.abs(acc.z-lastZ);
-      if(delta>shakeThreshold){
-        shakeCount++;
-        if(shakeCount>=2){
-          alert(secretMsg);
-          shakeCount=0;
-        }
-      } else {
-        if(shakeCount>0) shakeCount=Math.max(0,shakeCount-0.05);
-      }
-      lastX=acc.x; lastY=acc.y; lastZ=acc.z;
-    });
-  }
-  // Consola para curiosos
-  window.ARES={status:()=>alert("Agente Arlandis, autenticación pendiente. Decodifica el mensaje binario.")};
 };
+
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  if(n===2) cargarReto();
+}
+
+function cargarReto(){
+  document.getElementById('retoTitulo').textContent = retos[reto].titulo;
+  document.getElementById('retoTexto').textContent = retos[reto].texto;
+  document.getElementById('respuesta').value="";
+  document.getElementById('resultado').innerHTML="";
+}
+
+function comprobar(){
+  const val = document.getElementById('respuesta').value.toLowerCase().replace(/\s+/g,'');
+  if(val === retos[reto].clave){
+    document.getElementById('resultado').innerHTML =
+      "<div class='ok'>✔ Correcto. Puedes abrir el regalo.</div>";
+    reto++;
+    if(retos[reto]){
+      setTimeout(cargarReto,1500);
+    }else{
+      setTimeout(()=>go(3),1500);
+    }
+  }else{
+    document.getElementById('resultado').innerHTML =
+      "<div class='fail'>✖ Incorrecto. Inténtalo otra vez.</div>";
+  }
+}
+
+function final(){
+  const val=document.getElementById('culpable').value.toLowerCase().trim();
+  if(val==="elisa"){
+    document.getElementById('finalMsg').innerHTML =
+      "<div class='ok'>🎁 Caso cerrado. Puedes abrir el último regalo.</div>";
+  }else{
+    document.getElementById('finalMsg').innerHTML =
+      "<div class='fail'>No es correcto… piensa quién haría todo esto.</div>";
+  }
+}
+
+/* Fondo rosa partículas */
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+let w=c.width=innerWidth,h=c.height=innerHeight;
+window.onresize=()=>{w=c.width=innerWidth;h=c.height=innerHeight;}
+
+const p=Array.from({length:120},()=>({
+  x:Math.random()*w,
+  y:Math.random()*h,
+  v:(Math.random()*0.6)+0.2,
+  s:Math.random()*2+1
+}));
+
+function anim(){
+  ctx.clearRect(0,0,w,h);
+  for(let a of p){
+    a.y-=a.v;
+    if(a.y<0)a.y=h;
+    ctx.fillStyle="rgba(255,79,207,0.35)";
+    ctx.beginPath();
+    ctx.arc(a.x,a.y,a.s,0,Math.PI*2);
+    ctx.fill();
+  }
+  requestAnimationFrame(anim);
+}
+anim();
 </script>
 </body>
 </html>
