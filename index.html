@@ -1,254 +1,432 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Gimcana del Amigo Invisible</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sombras en la Falla</title>
 
 <style>
-:root{
-  --bg:#000;
-  --text:#fff;
-  --accent:#ff4fcf;
-  --panel:#111;
+
+/* ====== FONDO GENERAL ====== */
+
+body{
+    margin:0;
+    font-family: "Courier New", monospace;
+    background: linear-gradient(to bottom, #0b0f14 40%, #1a0000 100%);
+    background-attachment: fixed;
+    color:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
 
-html,body{
-  height:100%;
-  margin:0;
-  font-family:"Courier New",monospace;
-  background:#000;
-  color:var(--text);
-  overflow:hidden;
+/* ====== CONTENEDOR TIPO EXPEDIENTE ====== */
+
+.container{
+    width:100%;
+    margin: 40px 20px; 
+    background: rgba(0,0,0,0.88);
+    border:1px solid #ff3b3b33;
+    border-radius:16px;
+    padding:28px 22px;
+    box-shadow: 0 0 30px rgba(255,0,0,0.18);
+    backdrop-filter: blur(6px);
 }
 
-.screen{
-  position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.8s;
+/* ====== SECCIONES ====== */
+
+.section{
+    display:none;
+    text-align:center;
 }
 
-.screen.active{
-  opacity:1;
-  pointer-events:auto;
+.active{
+    display:block;
 }
 
-.panel{
-  background:rgba(17,17,17,0.75);
-  backdrop-filter:blur(6px);
-  padding:30px;
-  border-radius:16px;
-  width:90%;
-  max-width:700px;
-  box-shadow:0 0 25px var(--accent);
+/* ====== TITULOS ====== */
+
+h1{
+    color:#ff3b3b;
+    letter-spacing:2px;
+    font-size:22px;
 }
 
-.title{
-  font-size:26px;
-  color:var(--accent);
-  margin-bottom:20px;
-  text-shadow:0 0 12px var(--accent);
+h2{
+    font-size:16px;
+    opacity:0.8;
 }
+
+/* ====== BOTONES ====== */
 
 button{
-  background:transparent;
-  border:1px solid var(--accent);
-  color:var(--text);
-  padding:10px 20px;
-  border-radius:8px;
-  cursor:pointer;
-  margin-top:15px;
+    background-color:#ff3b3b;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    margin-top:20px;
+    cursor:pointer;
+    font-weight:bold;
+    border-radius:6px;
+    width:100%;
 }
+
+button:hover{
+    background-color:#ff1a1a;
+}
+
+/* ====== PISTAS ====== */
+.hint{
+    background-color: rgba(255, 59, 59, 0.1); /* un fondo tenue rojo */
+    border-left: 4px solid #ff3b3b; /* línea lateral para destacar */
+    padding:12px 16px;
+    margin:20px 0;
+    font-style: italic;
+    color:#ffdddd;
+    border-radius:6px;
+    font-size: small;
+}
+
+/* ====== INPUT ====== */
 
 input{
-  background:#000;
-  border:1px solid var(--accent);
-  color:var(--text);
-  padding:8px;
-  border-radius:6px;
-  width:200px;
-  text-align:center;
-  margin-top:10px;
+    padding:10px;
+    width:100%;
+    margin-top:20px;
+    font-size:16px;
+    border-radius:6px;
+    border:none;
+    box-sizing: border-box;
 }
 
-.ok{color:#b8ff90;font-weight:bold;}
-.fail{color:#ff8080;font-weight:bold;}
+/* ====== MENSAJES ====== */
 
-canvas {
-  position:fixed;   /* que ocupe toda la pantalla */
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:0;        /* debajo de todo */
-  pointer-events:none; /* no bloquea botones ni inputs */
+.error{
+    color:#ff4444;
+    margin-top:15px;
 }
 
-@media (max-width: 600px) {
-  .panel {
-    width: auto;          /* que respete el max-width pero no sea 100% */
-    margin: 0 15px;       /* margen lateral para separarlo de los bordes */
-    padding: 25px 20px;   /* un poquito más de espacio dentro */
-  }
+/* ====== NEÓN ====== */
+
+.neon{
+    font-size:18px;
+    font-weight:bold;
+    color: #ff2b2b;
+    text-align:center;
+    letter-spacing:2px;
+    text-shadow:
+        0 0 5px #ff2b2b,
+        0 0 10px #ff2b2b,
+        0 0 20px #ff0000,
+        0 0 40px #ff0000;
+    animation: flicker 1.5s infinite alternate;
 }
+
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* ====== FLECHA ====== */
+
+.arrow{
+    font-size:28px;
+    cursor:pointer;
+    margin:15px 0;
+    opacity:0.8;
+    transition: all 0.3s ease;
+}
+
+.arrow:hover{
+    transform: scale(1.2);
+    opacity:1;
+}
+
+.down{
+    animation: bounceDown 1.5s infinite;
+}
+
+.up{
+    animation: bounceUp 1.5s infinite;
+}
+
+@keyframes bounceDown {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+}
+
+@keyframes bounceUp {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* ====== PARPADEO CURSOR TITULO ====== */
+
+#typingTitle::after {
+    content: '|';
+    animation: blink 1s infinite;
+    margin-left:2px;
+}
+
+@keyframes blink{
+    0%,50%,100% { opacity:1; }
+    25%,75% { opacity:0; }
+}
+
 </style>
 </head>
-
 <body>
 
-<!-- PANTALLA INICIO -->
-<div id="s1" class="screen active">
-  <div class="panel">
-    <div class="title">Bienvenida, Zaira</div>
-    <p>
-      Si estás leyendo esto es porque has dado el primer paso.<br><br>
-      Aquí no hay regalos fáciles.<br>
-      Para conseguirlos tendrás que superar una serie de retos.<br><br>
-      Cada respuesta correcta será recompensada con un regalo.
-    </p>
-    <button onclick="go(6)">SIGUIENTE</button>
-  </div>
+<div class="container">
+
+<!-- INTRO PARTE 1 -->
+<div id="intro1" class="section active">
+    <h1 id="typingTitle" class="typing">CASO ABIERTO</h1>
+    <h2>Sombras en la Falla</h2>
+
+    <p>Xeraco amanece en silencio.</p>
+    <p>A tan solo unas semanas de las Fallas, una serie de incidentes inexplicables han sacudido a la comisión fallera.</p>
+    <p>No parecen accidentes. No parecen bromas.</p>
+    <p>El ninot principal ha desaparecido sin dejar rastro. La mascletà ha sido manipulada antes de su disparo.</p>
+
+    <div class="arrow down" onclick="mostrarSeccion('intro2')">⬇</div>
 </div>
 
-<!-- RETO -->
-<div id="s2" class="screen">
-  <div class="panel">
-    <div class="title" id="retoTitulo"></div>
-    <p id="retoTexto"></p>
+<!-- INTRO PARTE 2 -->
+<div id="intro2" class="section">
+    <div class="arrow up" onclick="mostrarSeccion('intro1')">⬆</div>
 
-    <input id="respuesta" placeholder="Introduce la clave">
-    <br>
-    <button onclick="comprobar()">VERIFICAR</button>
+    <p>La indumentaria valenciana ha sido alterada con precisión quirúrgica. Y la cazalla ha sido evaporada.</p>
+    <p>No hay puertas forzadas. No hay testigos fiables. No hay pruebas concluyentes.</p>
+    <p>Solo una certeza: alguien actúa desde dentro.</p>
+    <p>Javi queda oficialmente asignado como Inspector Jefe del Caso.</p>
+    <p class="neon">En Fallas, todo termina en fuego.</p>
 
-    <div id="resultado" style="margin-top:15px;"></div>
-  </div>
+    <button onclick="mostrarSeccion('instrucciones')">
+        COMENZAR INVESTIGACIÓN
+    </button>
 </div>
 
 <!-- INSTRUCCIONES -->
-<div id="s6" class="screen">
-  <div class="panel">
-    <div class="title">Instrucciones</div>
+<div id="instrucciones" class="section">
+    <h1>PROTOCOLO DE INVESTIGACIÓN</h1>
+
     <p>
-      1. Lee atentamente cada reto que se encuentra en los sobres negros.<br><br>
-      2. Resuelve la prueba para obtener la clave.<br><br>
-      3. Introduce la clave en el sistema.<br><br>
-      4. Si es correcta, podrás abrir el regalo con el número que coincide con el del reto que acabas de cumplir.<br><br>
-      5. Continúa hasta completar todos los retos.
+    Dentro de esta carpeta están todas las pruebas reunidas hasta ahora.
     </p>
-    <button onclick="go(2)">INICIAR JUEGO</button>
-  </div>
-</div>
 
-<!-- FINAL -->
-<div id="s3" class="screen">
-  <div class="panel">
-    <div class="title">Caso resuelto</div>
     <p>
-      Has resuleto cada pista.<br>
-      Ahora es hora de descubrir quién está detrás de todo esto para poder abrir tu último regalo.
+    Cada sobre es un expediente.
+    Cada expediente esconde un nombre.
     </p>
-    <input id="culpable" placeholder="Nombre del culpable">
-    <br>
-    <button onclick="final()">DESCUBRIR</button>
-    <div id="finalMsg" style="margin-top:15px;"></div>
-  </div>
-</div>
 
-<canvas id="bg"></canvas>
+    <p>
+    Tu misión es sencilla:
+    </p>
 
-<script>
-let reto = 1;
+    <p><strong>Analiza. Deduce y señala al culpable.</strong></p>
 
-const retos = {
-  1:{
-    titulo:"RETO 1",
-    texto:"Alguien dejó algo a medio cubrir, confiando en que supieras mirar más allá de la superficie.Rasca con cuidado.Reúne las letras.Forma la palabra correcta e introdúcela.",
-    clave:"skincare"
-  },
-  2:{
-    titulo:"RETO 2",
-    texto:"Lo que buscas permanece oculto hasta que se dan ciertas condiciones. Observa bien lo que se oculta y déjate guiar.",
-    clave:"glow"
-  },
-  3:{
-    titulo:"RETO 3",
-    texto:"Algunas cosas solo se revelan cuando se combinan.",
-    clave:"023"
-  }
-};
+    <p>
+    Cuando creas tener el nombre correcto, introdúcelo en el sistema. Si aciertas, deberás hablar en privado con esa persona.
+    Solo así podrás continuar.
+    </p>
 
-function go(n){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('s'+n).classList.add('active');
-  if(n===2) cargarReto();
-}
+    <p><strong>No abras el siguiente sobre hasta resolver el anterior.</strong></p>
 
-function cargarReto(){
-  document.getElementById('retoTitulo').textContent = retos[reto].titulo;
-  document.getElementById('retoTexto').textContent = retos[reto].texto;
-  document.getElementById('respuesta').value="";
-  document.getElementById('resultado').innerHTML="";
-}
+    <button onclick="mostrarSeccion('reto1')">
+        ACCEDER AL EXPEDIENTE 01
+        </button>
+    </div>
 
-function comprobar(){
-  const val = document.getElementById('respuesta').value.toLowerCase().replace(/\s+/g,'');
-  if(val === retos[reto].clave){
-    document.getElementById('resultado').innerHTML =
-      "<div class='ok'>✔ Correcto. Puedes abrir el regalo.</div>";
-    reto++;
-    if(retos[reto]){
-      setTimeout(cargarReto,1500);
-    }else{
-      setTimeout(()=>go(3),1500);
+    <!-- RETO 1 -->
+    <div id="reto1" class="section">
+    <h1>EXPEDIENTE 01</h1>
+    <h2>El Ninot Ausente</h2>
+
+    <p>El ninot principal desapareció del almacén donde permanecía custodiado hasta la plantà.</p>
+    <p>No había señales de forzado.</p>
+    <p>No faltaba nada más.</p>
+    <p>En su lugar, solo se encontró una nota doblada cuidadosamente.</p>
+    <p>Fue recogida e incorporada al informe oficial.</p>
+    <p>La transcripción literal decía:</p>
+
+    <p class="neon">RASCA Y ACERTARÁS</p>
+    <p class="hint">Si a la siguiente pista quieres avanzar,
+    el documento tendrás que rascar.
+    Para el alfabeto poder encontrar,
+    Al Roca deberás visitar.</p>
+
+    <input type="text" id="respuestaReto1" placeholder="Nombre del sospechoso">
+    <button onclick="validarReto1()">VALIDAR SOSPECHOSO</button>
+    <div id="mensajeReto1"></div>
+    </div>
+
+    <div id="exito1" class="section">
+    <h1>SOSPECHOSA IDENTIFICADA</h1>
+    <p>Acércate a Marta. Tiene algo que entregarte.</p>
+    <button onclick="mostrarSeccion('reto2')">CONTINUAR</button>
+    </div>
+
+    <!-- RETO 2 -->
+    <div id="reto2" class="section">
+    <h1>EXPEDIENTE 02</h1>
+    <h2>La Mascletà Manipulada</h2>
+
+    <p>Durante la revisión previa al montaje de la mascletà, una de las cajas de pólvora apareció desplazada.</p>
+    <p>El contenido estaba intacto.</p>
+    <p>No faltaba material.</p>
+    <p>Pero en el interior se encontró una nota doblada y, junto a ella, una pequeña tarjeta sin texto aparente.</p>
+    <p>La nota fue incorporada al informe. Decía lo siguiente:</p>
+
+    <p class="neon">LO QUE EL FUEGO ESCONDE</p>
+    <p class="hint">Esta tarjeta esconde un mensaje oculto,
+    pero aunque el fuego es tu aliado,
+    deberás tener cuidado.</p>
+
+    <p>La tarjeta adjunta no presenta marcas visibles a simple vista.</p>
+    <p>Sin embargo, el autor parecía confiar en que el mensaje no permanecería oculto para siempre.</p>
+
+    <input type="text" id="respuestaReto2" placeholder="Nombre del sospechoso">
+    <button onclick="validarReto2()">VALIDAR SOSPECHOSO</button>
+    <div id="mensajeReto2"></div>
+    </div>
+
+    <div id="exito2" class="section">
+    <h1>SABOTAJE CONFIRMADO</h1>
+    <p>Miguel estaba detrás de la manipulación.</p>
+    <button onclick="mostrarSeccion('reto3')">CONTINUAR</button>
+    </div>
+
+    <!-- RETO 3 -->
+    <div id="reto3" class="section">
+    <h1>EXPEDIENTE 03</h1>
+    <h2>La Cazalla Evaporada</h2>
+
+    <p>Días antes del brindis oficial, la botella reservada apareció vacía.</p>
+    <p>El precinto estaba intacto.</p>
+    <p>No había señales de apertura.</p>
+    <p>No era un robo. Era un mensaje.</p>
+    <p>Junto a la botella se encontró un sobre cerrado.</p>
+    <p>Dentro había una nota y un objeto circular con inscripciones desordenadas.</p>
+    <p>La nota decía:</p>
+
+    <p class="neon">LA RULETA DE LA MUERTE</p>
+    <p class="hint">Un garabato encontrarás,
+    pero para ver más allá,
+    la ruleta deberás girar.</p>
+
+    <p>El objeto parece decorativo. Pero nada en este caso lo es.</p>
+    <input type="text" id="respuestaReto3" placeholder="Nombre del sospechoso">
+    <button onclick="validarReto3()">VALIDAR SOSPECHOSO</button>
+    <div id="mensajeReto3"></div>
+    </div>
+
+    <div id="exito3" class="section">
+    <h1>CONSPIRACIÓN DESCUBIERTA</h1>
+    <p>David y Ani actuaron juntos.</p>
+    <button onclick="mostrarSeccion('reto4')">CONTINUAR</button>
+    </div>
+
+    <!-- RETO 4 -->
+    <div id="reto4" class="section">
+    <h1>EXPEDIENTE 04</h1>
+    <h2>La Indumentaria Alterada</h2>
+
+    <p>Durante la revisión final de los trajes oficiales, uno presentó una anomalía.</p>
+    <p>El bordado central no coincidía con el diseño aprobado.</p>
+    <p>No parecía un error. Era intencionado.</p>
+    <p>Junto a los trajes se encontraron fragmentos de papel translúcido.</p>
+    <p>Dentro de un sobre había una nota y las instrucciones para interpretar los papeles.</p>
+    <p>La nota decía:</p>
+
+    <p class="neon">LAS COSAS NO SON LO QUE PARECEN</p>
+    <p class="hint">El texto está incompleto
+    y al mismo tiempo también está completo.
+    Si el mensaje quieres entender,
+    sus hojas deberás sobreponer.</p>
+
+    <input type="text" id="respuestaReto4" placeholder="Nombre del sospechoso">
+    <button onclick="validarReto4()">VALIDAR SOSPECHOSO</button>
+    <div id="mensajeReto4"></div>
+    </div>
+
+    <div id="final" class="section">
+    <h1>CASO CERRADO</h1>
+    <p>Paula fue la última pieza.</p>
+    <p>Cuatro sabotajes. Cuatro nombres.</p>
+    <p class="neon">En Fallas, todo termina en fuego.</p>
+    </div>
+
+    <script>
+    function mostrarSeccion(id){
+        document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
-  }else{
-    document.getElementById('resultado').innerHTML =
-      "<div class='fail'>✖ Incorrecto. Inténtalo otra vez.</div>";
-  }
-}
 
-function final(){
-  const val=document.getElementById('culpable').value.toLowerCase().trim();
-  if(val==="elisa"){
-    document.getElementById('finalMsg').innerHTML =
-      "<div class='ok'>🎁 Caso cerrado. Puedes abrir el último regalo.</div>";
-  }else{
-    document.getElementById('finalMsg').innerHTML =
-      "<div class='fail'>No es correcto… piensa quién haría todo esto.</div>";
-  }
-}
+    function normalizarTexto(texto){
+        return texto.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    }
 
-/* Fondo rosa partículas */
-const c=document.getElementById('bg'),ctx=c.getContext('2d');
-let w=c.width=innerWidth,h=c.height=innerHeight;
-window.onresize=()=>{w=c.width=innerWidth;h=c.height=innerHeight;}
+    function validarReto1(){
+        if(normalizarTexto(document.getElementById("respuestaReto1").value)==="marta"){
+            mostrarSeccion("exito1");
+        } else {
+            document.getElementById("mensajeReto1").innerHTML="<p class='error'>El caso no encaja, revisa las pistas.</p>";
+        }
+    }
 
-const p=Array.from({length:120},()=>({
-  x:Math.random()*w,
-  y:Math.random()*h,
-  v:(Math.random()*0.6)+0.2,
-  s:Math.random()*2+1
-}));
+    function validarReto2(){
+        if(normalizarTexto(document.getElementById("respuestaReto2").value)==="miguel"){
+            mostrarSeccion("exito2");
+        } else {
+            document.getElementById("mensajeReto2").innerHTML="<p class='error'>La pólvora no apunta ahí…</p>";
+        }
+    }
 
-function anim(){
-  ctx.clearRect(0,0,w,h);
-  for(let a of p){
-    a.y-=a.v;
-    if(a.y<0)a.y=h;
-    ctx.fillStyle="rgba(255,79,207,0.35)";
-    ctx.beginPath();
-    ctx.arc(a.x,a.y,a.s,0,Math.PI*2);
-    ctx.fill();
-  }
-  requestAnimationFrame(anim);
-}
-anim();
+    function validarReto3(){
+        let input = normalizarTexto(document.getElementById("respuestaReto3").value).trim();
+
+        // Patrón: "david" seguido opcionalmente de espacio/conector y luego "ani"
+        // O "ani" seguido opcionalmente de espacio/conector y luego "david"
+        let patron = /^(david\s*(y|i)?\s*ani|ani\s*(y|i)?\s*david)$/;
+
+        if(patron.test(input)){
+            mostrarSeccion("exito3");
+        } else {
+            document.getElementById("mensajeReto3").innerHTML="<p class='error'>El patrón no coincide…</p>";
+        }
+    }
+
+    function validarReto4(){
+        if(normalizarTexto(document.getElementById("respuestaReto4").value)==="paula"){
+            mostrarSeccion("final");
+        } else {
+            document.getElementById("mensajeReto4").innerHTML="<p class='error'>Algo no encaja…</p>";
+        }
+    }
+
+    function typeText(element, text, speed = 40, callback = null){
+        let i = 0;
+        element.innerHTML = "";
+        let interval = setInterval(() => {
+            element.innerHTML += text.charAt(i);
+            i++;
+            if(i >= text.length){
+                clearInterval(interval);
+                if(callback) callback();
+            }
+        }, speed);
+    }
+
+    window.addEventListener('load', () => {
+        const title = document.getElementById('typingTitle');
+        const text = title.innerText;
+        typeText(title, text, 100); // velocidad 50ms por letra
+    });
+
 </script>
+
 </body>
 </html>
